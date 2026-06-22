@@ -1,38 +1,44 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Recipe Collection</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Все рецепты{% endblock %}
+{% block content %}
+<h1>Все рецепты</h1>
 
-<h1>Мои рецепты</h1>
-
-<form method="GET">
-    <input type="text" name="search" placeholder="Поиск">
-    <button type="submit">Найти</button>
+<form method="GET" action="/" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:1.5rem;">
+    <input type="text" name="q" value="{{ search }}" placeholder="Поиск по названию..." style="flex:1; min-width:200px;">
+    <select name="category" style="min-width:160px;">
+        <option value="">Все категории</option>
+        {% for cat in categories %}
+        <option value="{{ cat }}" {% if category == cat %}selected{% endif %}>{{ cat.capitalize() }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary">Найти</button>
+    {% if search or category %}
+    <a href="/" class="btn btn-secondary">Сбросить</a>
+    {% endif %}
 </form>
 
-<br>
-
-<a href="/add">Добавить рецепт</a>
-
-<hr>
-
-{% for recipe in recipes %}
-    <h3>{{ recipe.title }}</h3>
-
-    <p>{{ recipe.category }}</p>
-
-    <a href="/recipe/{{ recipe.id }}">
-        Открыть
-    </a>
-
-    <a href="/delete/{{ recipe.id }}">
-        Удалить
-    </a>
-
-    <hr>
-{% endfor %}
-
-</body>
-</html>
+{% if recipes %}
+    <p class="meta" style="margin-bottom:1rem;">Найдено рецептов: {{ recipes|length }}</p>
+    {% for recipe in recipes %}
+    <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+                <a href="/recipe/{{ recipe['id'] }}" style="text-decoration:none; color:inherit;">
+                    <h2 style="margin-bottom:8px;">{{ recipe['title'] }}</h2>
+                </a>
+                <span class="badge">{{ recipe['category'] }}</span>
+                {% if recipe['cook_time'] %}
+                <span class="meta">⏱ {{ recipe['cook_time'] }}</span>
+                {% endif %}
+            </div>
+            <a href="/recipe/{{ recipe['id'] }}" class="btn btn-secondary" style="white-space:nowrap;">Открыть →</a>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <div class="card" style="text-align:center; padding:3rem;">
+        <p style="font-size:1.2rem; color:#888; margin-bottom:1rem;">Рецептов пока нет</p>
+        <a href="/add" class="btn btn-primary">Добавить первый рецепт</a>
+    </div>
+{% endif %}
+{% endblock %}

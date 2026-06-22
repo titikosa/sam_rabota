@@ -1,28 +1,35 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{{ recipe.title }}</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}{{ recipe['title'] }}{% endblock %}
+{% block content %}
+<a href="/" class="btn btn-secondary" style="margin-bottom:1.5rem; display:inline-block;">← Все рецепты</a>
 
-<h1>{{ recipe.title }}</h1>
+<div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+        <div>
+            <h1 style="margin-bottom:10px;">{{ recipe['title'] }}</h1>
+            <span class="badge">{{ recipe['category'] }}</span>
+            {% if recipe['cook_time'] %}
+            <span class="meta">⏱ {{ recipe['cook_time'] }}</span>
+            {% endif %}
+        </div>
+        <div style="display:flex; gap:10px;">
+            <a href="/edit/{{ recipe['id'] }}" class="btn btn-secondary">✏️ Редактировать</a>
+            <form method="POST" action="/delete/{{ recipe['id'] }}" onsubmit="return confirm('Удалить этот рецепт?')">
+                <button type="submit" class="btn btn-danger">🗑 Удалить</button>
+            </form>
+        </div>
+    </div>
+</div>
 
-<p>
-    <b>Категория:</b>
-    {{ recipe.category }}
-</p>
+<div class="card" style="margin-top:1rem;">
+    <h2>Ингредиенты</h2>
+    <p style="line-height:1.8; white-space:pre-line; font-family:sans-serif;">{{ recipe['ingredients'] }}</p>
+</div>
 
-<h3>Ингредиенты</h3>
+<div class="card" style="margin-top:1rem;">
+    <h2>Способ приготовления</h2>
+    <p style="line-height:1.8; white-space:pre-line; font-family:sans-serif;">{{ recipe['instructions'] }}</p>
+</div>
 
-<p>{{ recipe.ingredients }}</p>
-
-<h3>Приготовление</h3>
-
-<p>{{ recipe.instructions }}</p>
-
-<a href="/">
-    Назад
-</a>
-
-</body>
-</html>
+<p class="meta" style="margin-top:1rem;">Добавлено: {{ recipe['created_at'] }}</p>
+{% endblock %}
